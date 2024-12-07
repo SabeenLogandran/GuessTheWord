@@ -1,0 +1,81 @@
+import random
+
+# List of words categorized by difficulty levels
+word_list = {
+    'easy': ['cat', 'dog', 'mat', 'hat', 'fat'],
+    'casual': ['fire', 'food', 'cube', 'rain', 'crow'],
+    'hard': ['action', 'gaming', 'images', 'ladder', 'cactus']
+}
+
+# Function to display the word with dashes for unguessed letters
+def display_word(word, guessed_letters):
+    display = ''
+    for letter in word:
+        if letter in guessed_letters:
+            display += letter
+        else:
+            display += '-'
+    return display
+
+# Function to prompt the player to guess a letter and validate the input
+def get_guess(guessed_letters):
+    while True:
+        guess = input("Guess a letter: ").lower()
+        if len(guess) != 1:
+            print("Please enter only one letter.")
+        elif not guess.isalpha():
+            print("Please enter a valid letter.")
+        elif guess in guessed_letters:
+            print("You already guessed that letter.")
+        else:
+            return guess
+
+# Function to get difficulty level from the player
+def get_difficulty():
+    while True:
+        difficulty = input("Select difficulty (easy/casual/hard): ").lower()
+        if difficulty in word_list:
+            return difficulty
+        else:
+            print("Invalid difficulty. Please choose 'easy', 'casual', or 'hard'.")
+
+# Main game loop
+def play_game():
+    print("Welcome to 'Guess the Word' game!")
+    difficulty = get_difficulty()  # Get difficulty level from the player
+    word = random.choice(word_list[difficulty])  # Randomly select a word from the chosen difficulty
+    guessed_letters = []  # List to keep track of guessed letters
+    attempts = {'easy': 8, 'casual': 6, 'hard': 4}[difficulty]  # Set attempts based on difficulty
+
+    print(f"You have {attempts} attempts to guess the word.")
+    
+    # Game loop
+    while attempts > 0:
+        print("\nCurrent word: " + display_word(word, guessed_letters))
+        print("Guessed letters: " + ', '.join(guessed_letters))
+        print(f"Attempts remaining: {attempts}")
+        
+        guess = get_guess(guessed_letters)
+        guessed_letters.append(guess)
+        
+        # Check if the guessed letter is in the word
+        if guess in word:
+            print(f"Good guess! '{guess}' is in the word.")
+        else:
+            attempts -= 1
+            print(f"Oops! '{guess}' is not in the word.")
+        
+        # Check if the player has guessed the word
+        if all(letter in guessed_letters for letter in word):
+            print(f"Congratulations! You guessed the word: {word}")
+            break
+    else:
+        print(f"Game over! The word was: {word}")
+
+    # Ask if the player wants to play again
+    play_again = input("\nDo you want to play again? (yes/no): ").lower()
+    if play_again == 'yes':
+        play_game()
+
+# Start the game
+play_game()
